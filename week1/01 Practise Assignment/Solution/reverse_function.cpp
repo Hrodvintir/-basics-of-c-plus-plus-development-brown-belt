@@ -1,51 +1,57 @@
-#include <algorithm>
-#include <vector>
-using namespace std;
+#include "priority_collection.h"
+#include "UnitTestsFramework.h"
 
-//-------------------------------------------------------------------------------------------------
-class FunctionPart {
-public:
-  FunctionPart(char new_operation, double new_value) {
-    operation = new_operation;
-    value = new_value;
-  }
-  double Apply(double source_value) const {
-    if (operation == '+') {
-      return source_value + value;
-    } else {  // operation == '-'
-      return source_value - value;
-    }
-  }
-  void Invert() {
-    if (operation == '+') {
-      operation = '-';
-    } else {  // operation == '-'
-      operation = '+';
-    }
-  }
-private:
-  char operation;
-  double value;
-};
-//-------------------------------------------------------------------------------------------------
-class Function {
-public:
-  void AddPart(char operation, double value) {
-    parts.push_back({operation, value});
-  }
-  double Apply(double value) const {
-    for (const FunctionPart& part : parts) {
-      value = part.Apply(value);
-    }
-    return value;
-  }
-  void Invert() {
-    for (FunctionPart& part : parts) {
-      part.Invert();
-    }
-    reverse(begin(parts), end(parts));
-  }
-private:
-  vector<FunctionPart> parts;
-};
 
+void TestNoCopy() 
+{
+	PriorityCollection<StringNonCopyable> strings;
+	const auto white_id = strings.Add("white");
+	const auto yellow_id = strings.Add("yellow");
+	const auto red_id = strings.Add("red");
+
+	strings.Promote(yellow_id);
+	for (int i = 0; i < 2; ++i) 
+	{
+		strings.Promote(red_id);
+	}
+
+	strings.Promote(yellow_id);
+	
+    {
+		const auto item = strings.PopMax();
+		ASSERT_EQUAL(item.first, "red");
+		ASSERT_EQUAL(item.second, 2);
+	}
+	
+    {
+		const auto item = strings.PopMax();
+		ASSERT_EQUAL(item.first, "yellow");
+		ASSERT_EQUAL(item.second, 2);
+	}
+	
+    {
+		const auto item = strings.PopMax();
+		ASSERT_EQUAL(item.first, "white");
+		ASSERT_EQUAL(item.second, 0);
+	}
+
+	{
+		PriorityCollection<StringNonCopyable> s;
+
+		std::vector<StringNonCopyable> in;
+		in.emplace_back("white");
+		in.emplace_back("yellow");
+		in.emplace_back("red");
+		in.emplace_back("brown");
+		std::vector<size_t> out(4);
+
+		s.Add(in.begin(), in.end(), out.begin());
+	}
+}
+
+
+void TestPriorityCollection()
+{
+	TestRunner tr;
+	RUN_TEST(tr, TestNoCopy);
+}
