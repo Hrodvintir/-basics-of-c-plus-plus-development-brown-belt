@@ -2,6 +2,7 @@
 #include <vector>
 using namespace std;
 
+//-------------------------------------------------------------------------------------------------
 class FunctionPart {
 public:
   FunctionPart(char new_operation, double new_value) {
@@ -26,7 +27,7 @@ private:
   char operation;
   double value;
 };
-
+//-------------------------------------------------------------------------------------------------
 class Function {
 public:
   void AddPart(char operation, double value) {
