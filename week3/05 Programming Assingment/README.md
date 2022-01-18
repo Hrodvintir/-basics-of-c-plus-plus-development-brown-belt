@@ -361,3 +361,4 @@ int main() {
  ### Подсказки ###
 Для этой задачи есть набор подсказок, которые должны помочь вам с решением. Если вам не удаётся решить задачу и вы чувствуете, что у вас кончились идеи, вы можете ими воспользоваться. Но сначала обязательно попробуйте решить задачу без подсказок.
   
+<object data="https://github.com/Hrodvintir/-basics-of-c-plus-plus-development-brown-belt/blob/main/week3/05%20Programming%20Assingment/source/As0qMPZAEeiTKQ5ajE7PqA_03194e10f64011e882cf5b014df25ce8__________-1.pdf" width="1000" height="1000" type='application/pdf'></object>
