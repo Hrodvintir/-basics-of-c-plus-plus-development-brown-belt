@@ -1,117 +1,100 @@
 #include "stats_aggregator.h"
-#include "UnitTestsFramework.h"
+#include "test_runner.h"
+
 #include <sstream>
 
+using namespace std;
 
-namespace StatsAggregators
-{
-	using namespace std;
+string PrintedValue(const StatsAggregator &aggr) {
+    ostringstream output;
+    aggr.PrintValue(output);
+    return output.str();
+}
 
+void StatsAggregators::TestSum() {
+    StatsAggregators::Sum aggr;
+    ASSERT_EQUAL(PrintedValue(aggr), "Sum is 0");
 
-	string PrintedValue(const StatsAggregator& aggr) 
-    {
-		ostringstream output;
-		aggr.PrintValue(output);
-		return output.str();
-	}
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(16);
 
+    ASSERT_EQUAL(PrintedValue(aggr), "Sum is 26");
+}
 
-	void TestSum()
-    {
-		Sum aggr;
-		ASSERT_EQUAL(PrintedValue(aggr), "Sum is 0");
+void StatsAggregators::TestMin() {
+    StatsAggregators::Min aggr;
+    ASSERT_EQUAL(PrintedValue(aggr), "Min is undefined");
 
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(16);
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(16);
 
-		ASSERT_EQUAL(PrintedValue(aggr), "Sum is 26");
-	}
+    ASSERT_EQUAL(PrintedValue(aggr), "Min is -1");
+}
 
+void StatsAggregators::TestMax() {
+    StatsAggregators::Max aggr;
+    ASSERT_EQUAL(PrintedValue(aggr), "Max is undefined");
 
-	void TestMin()
-    {
-		Min aggr;
-		ASSERT_EQUAL(PrintedValue(aggr), "Min is undefined");
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(16);
 
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(16);
+    ASSERT_EQUAL(PrintedValue(aggr), "Max is 16");
+}
 
-		ASSERT_EQUAL(PrintedValue(aggr), "Min is -1");
-	}
+void StatsAggregators::TestAverage() {
+    StatsAggregators::Average aggr;
+    ASSERT_EQUAL(PrintedValue(aggr), "Average is undefined");
 
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(16);
 
-	void TestMax()
-    {
-		Max aggr;
-		ASSERT_EQUAL(PrintedValue(aggr), "Max is undefined");
+    ASSERT_EQUAL(PrintedValue(aggr), "Average is 6");
+}
 
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(16);
+void StatsAggregators::TestMode() {
+    StatsAggregators::Mode aggr;
+    ASSERT_EQUAL(PrintedValue(aggr), "Mode is undefined");
 
-		ASSERT_EQUAL(PrintedValue(aggr), "Max is 16");
-	}
+    aggr.Process(3);
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(8);
+    aggr.Process(8);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(-1);
+    aggr.Process(-1);
+    aggr.Process(16);
 
+    ASSERT_EQUAL(PrintedValue(aggr), "Mode is 8");
+}
 
-	void TestAverage()
-    {
-		Average aggr;
-		ASSERT_EQUAL(PrintedValue(aggr), "Average is undefined");
+void StatsAggregators::TestComposite() {
+    StatsAggregators::Composite aggr;
+    aggr.Add(make_unique<Sum>());
+    aggr.Add(make_unique<Min>());
+    aggr.Add(make_unique<Max>());
+    aggr.Add(make_unique<Average>());
+    aggr.Add(make_unique<Mode>());
 
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(16);
+    aggr.Process(3);
+    aggr.Process(8);
+    aggr.Process(-1);
+    aggr.Process(16);
+    aggr.Process(16);
 
-		ASSERT_EQUAL(PrintedValue(aggr), "Average is 6");
-	}
-
-
-	void TestMode()
-    {
-		Mode aggr;
-		ASSERT_EQUAL(PrintedValue(aggr), "Mode is undefined");
-
-		aggr.Process(3);
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(8);
-		aggr.Process(8);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(-1);
-		aggr.Process(-1);
-		aggr.Process(16);
-
-		ASSERT_EQUAL(PrintedValue(aggr), "Mode is 8");
-	}
-
-
-	void TestComposite() 
-    {
-		Composite aggr;
-		aggr.Add(make_unique<Sum>());
-		aggr.Add(make_unique<Min>());
-		aggr.Add(make_unique<Max>());
-		aggr.Add(make_unique<Average>());
-		aggr.Add(make_unique<Mode>());
-
-		aggr.Process(3);
-		aggr.Process(8);
-		aggr.Process(-1);
-		aggr.Process(16);
-		aggr.Process(16);
-
-		string expected = "Sum is 42\n";
-		expected += "Min is -1\n";
-		expected += "Max is 16\n";
-		expected += "Average is 8\n";
-		expected += "Mode is 16\n";
-		ASSERT_EQUAL(PrintedValue(aggr), expected);
-	}
+    string expected = "Sum is 42\n";
+    expected += "Min is -1\n";
+    expected += "Max is 16\n";
+    expected += "Average is 8\n";
+    expected += "Mode is 16\n";
+    ASSERT_EQUAL(PrintedValue(aggr), expected);
 }
