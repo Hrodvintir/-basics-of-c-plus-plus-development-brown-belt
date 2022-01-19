@@ -1,3 +1,4 @@
+#  Интеграция структуры Person в unordered_set #
 Мы хотим научиться встраивать структуру Person в контейнер unordered_set<Person, PersonHasher>. Для этого вам нужно реализовать структуры PersonHasher, AddressHasher, и операторы сравнения:  
 ```objectivec
 struct Address {
