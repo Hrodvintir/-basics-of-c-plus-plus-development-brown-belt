@@ -1,29 +1,24 @@
 #pragma once
-#include <unordered_map>
+
 #include <string>
-#include <istream>
+#include <unordered_map>
+#include <iostream>
 
+namespace Ini {
 
-namespace Ini
-{
-	using Section = std::unordered_map<std::string, std::string>;
+    using Section = std::unordered_map<std::string, std::string>;
 
-	class Document 
-    {
-	public:
-		Section& AddSection(std::string name);
-		
-	    const Section& GetSection(const std::string& name) const;
-		
-	    size_t SectionCount() const;
+    class Document {
+    public:
+        Section &AddSection(std::string name);
 
-	private:
-		std::unordered_map<std::string, Section> sections;
-	};
+        const Section &GetSection(const std::string &name) const;
 
-	Document Load(std::istream& input);
+        size_t SectionCount() const;
 
-	std::string_view ParseHeader(std::string_view line);
+    private:
+        std::unordered_map<std::string, Section> sections;
+    };
 
-	std::pair<std::string, std::string> ParseExpression(std::string_view line);
+    Document Load(std::istream &input);
 }
